@@ -43,7 +43,6 @@ function Banner() {
     fade: true,
     arrows: false,
   };
-  
 
   return (
     <div className="relative w-full h-[500px] overflow-hidden">
@@ -98,67 +97,26 @@ function AppContent() {
         'Regular updates and support, maintaining the longevity and performance of the iPhone.'
       ]
     },
-    {
-      name: 'Canon-Dslr',
-      category: 'Camera',
-      price: '100.00 USD',
-      image: 'https://images.pexels.com/photos/90946/pexels-photo-90946.jpeg?auto=compress&cs=tinysrgb&w=600',
-      count: 2,
-      description: 'Professional DSLR camera for stunning photography and videography',
-      brand: 'Canon',
-      resolution: '24.2 MP',
-      rating: 4.5,
-      videoResolution: 'Full HD 1080p',
-      ratingimg:fourpoint5,
-      pur:'35+ purchased last month',
-      mrp:'150.00',
-      dis:'25%',
-      ati: [
-        'High-resolution 24.2 MP sensor for crisp and clear images.',
-        'Full HD 1080p video recording for professional videography.',
-        'Rated 4.5 stars by satisfied customers.',
-        'Ideal for both photography enthusiasts and professionals.',
-        'Compact and durable design for portability and longevity.'
-      ]
-    },
-    {
-      name: 'CalvinKlein-Perfume',
-      category: 'Perfumes',
-      price: '370.66 USD',
-      image: 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzJ8fHByb2R1Y3RzfGVufDB8fDB8fHww',
-      count: 3,
-      description: 'Calvin Klein perfume for a captivating and long-lasting fragrance',
-      brand: 'Calvin Klein',
-      rating: 4.0,
-      scent: 'Floral and Woody',
-      ratingimg:four,
-      pur:'250+ purchased last month',
-      mrp:'741.32',
-      dis:'50%',
-      ati: [
-        'Calvin Klein perfume with a captivating floral and woody scent.',
-        'Rated 4.0 stars by satisfied customers.',
-        'Ideal for both daytime and evening wear.',
-        'Long-lasting fragrance for all-day freshness.',
-        'Packaged in an elegant bottle for a luxurious touch.'
-      ]
-    }
+    // Add more static products as necessary
   ];
 
+  const fetchProducts = async (category = selectedCategory, search = searchText) => {
+    try {
+      const params = {};
+      if (category !== 'All') params.category = category;
+      if (search) params.name = search;
+      const response = await axios.get(`${link}/pro/all`, { params });
+      const combinedProducts = [...staticProducts, ...response.data];
+      setProducts(combinedProducts);
+    } catch (error) {
+      console.error('Error fetching products from backend:', error);
+      setProducts(staticProducts); // Fallback to static products if backend fails
+    }
+  };
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(`${link}/pro/all`);
-        const combinedProducts = [...staticProducts, ...response.data];
-        setProducts(combinedProducts);
-      } catch (error) {
-        console.error('Error fetching products from backend:', error);
-        setProducts(staticProducts); // Fallback to static products if backend fails
-      }
-    };
-  
     fetchProducts();
-  }, []);
+  }, [selectedCategory, searchText]);
 
   const filteredProducts = products.filter(p => 
     (selectedCategory === 'All' || p.category === selectedCategory) &&
@@ -167,10 +125,12 @@ function AppContent() {
 
   const handleSearch = (text) => {
     setSearchText(text);
+    fetchProducts(selectedCategory, text);
   };
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
+    fetchProducts(category, searchText);
   };
 
   const hideNavbar = location.pathname === '/login' || location.pathname === '/signup';
