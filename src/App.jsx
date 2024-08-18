@@ -9,6 +9,7 @@ import link from './link'; // Assume this is your backend URL
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import threepoint5 from '../src/images/3.5.png';
+import AdminPanel from './AdminPanel';
 import four from '../src/images/4.0.png';
 import fourpoint5 from '../src/images/4.5.png';
 import five from '../src/images/5.0.png';
@@ -161,6 +162,7 @@ function AppContent() {
             }
           />
           <Route path="/productinfo" element={<ProductInfo />} />
+          <Route path="/admin" element={<AdminPanel />} />
         </Routes>
       </div>
     </div>
